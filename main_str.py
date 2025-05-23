@@ -55,7 +55,7 @@ def create_pdf(text, goal_summary, goal):
 def summarize_goal(goal):
     summary_prompt = f"Summarize this goal in one concise sentence: {goal}"
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4.1-2025-04-14",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": summary_prompt}

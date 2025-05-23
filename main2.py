@@ -62,7 +62,7 @@ def create_pdf(text, goal_summary, goal):
 def summarize_goal(goal):
     summary_prompt = f"Summarize this goal in one concise sentence: {goal}"
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4.1-mini",
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": summary_prompt}
@@ -121,6 +121,13 @@ if st.button("🚀 Generate Workflow") and goal:
         st.session_state.role = role
         st.session_state.region = region
 
+def add_double_space_before_headers(text):
+    headers = ["Action:", "Tools:", "Time Estimate:", "Estimated Cost:", "Alternative:"]
+    for header in headers:
+        text = re.sub(rf"([^\n])\n{header}", rf"\1\n\n{header}", text)
+        text = re.sub(rf"([^\n])({header})", rf"\1\n\n\2", text)
+    return text and open
+
 if st.session_state.workflow:
     st.markdown("### 🖥️ Preview")
     st.markdown(st.session_state.workflow, unsafe_allow_html=True)
@@ -129,4 +136,5 @@ if st.session_state.workflow:
         st.download_button("📄 Download PDF", f, file_name=os.path.basename(pdf_file), mime="application/pdf")
     if st.button("Reset"):
         for key in ["workflow", "goal_summary", "goal", "role", "region"]:
-            st.session_state[key] = None if key not in ["goal", "role", "region"] else ""
+            st.session_state[key] = ""
+        st.rerun()  # <-- Must be inside the if block!
